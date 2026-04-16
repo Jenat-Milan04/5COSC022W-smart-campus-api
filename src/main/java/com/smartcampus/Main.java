@@ -22,7 +22,7 @@ public class Main {
         System.out.println("Smart Campus API running at " + BASE_URI + "api/v1");
         System.out.println("Press ENTER to stop...");
         System.in.read();
-        server.stop();
+        server.shutdownNow();
     }
 }
 
