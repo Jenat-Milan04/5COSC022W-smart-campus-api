@@ -6,7 +6,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import java.net.URI;
 
 public class Main {
-    public static final String BASE_URI = "http://localhost:8080/";  // Base URL where the server will run
+    public static final String BASE_URI = "http://localhost:8080/api/v1/";  // Base URL where the server will run
 
     public static void main(String[] args) throws Exception {
         // Create a Jersey ResourceConfig
@@ -19,7 +19,7 @@ public class Main {
         HttpServer server = GrizzlyHttpServerFactory.createHttpServer(
             URI.create(BASE_URI), config
         );
-        System.out.println("Smart Campus API running at " + BASE_URI + "api/v1");
+        System.out.println("Smart Campus API running at " + BASE_URI);
         System.out.println("Press ENTER to stop...");
         System.in.read();
         server.shutdownNow();
