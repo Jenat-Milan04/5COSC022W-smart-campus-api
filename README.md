@@ -3,7 +3,7 @@ RESTful Smart Campus Sensor &amp; Room Management API built with JAX-RS (Jersey)
 
 **Module:** 5COSC022W — Client-Server Architectures  
 **Student:** Jenat Milan Jeyachandran 
-**Student ID:** 202420622 / w2152922
+**Student ID:** 20242062 / w2152922
 **GitHub Repo:** https://github.com/Jenat-Milan04/5COSC022W-smart-campus-api
 
 ---
