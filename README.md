@@ -21,132 +21,6 @@ All data is stored in-memory using `ConcurrentHashMap` and `ArrayList`. No datab
 
 ---
 
-## Project Structure
-
-```
-smart-campus-api/
-├── pom.xml
-└── src/main/java/com/smartcampus/
-    ├── Main.java
-    ├── App.java
-    ├── model/
-    │   ├── Room.java
-    │   ├── Sensor.java
-    │   └── SensorReading.java
-    ├── store/
-    │   └── DataStore.java
-    ├── resource/
-    │   ├── DiscoveryResource.java
-    │   ├── RoomResource.java
-    │   ├── SensorResource.java
-    │   └── SensorReadingResource.java
-    ├── exception/
-    │   ├── RoomNotEmptyException.java
-    │   ├── LinkedResourceNotFoundException.java
-    │   ├── SensorUnavailableException.java
-    │   ├── RoomNotEmptyExceptionMapper.java
-    │   ├── LinkedResourceNotFoundExceptionMapper.java
-    │   ├── SensorUnavailableExceptionMapper.java
-    │   └── GlobalExceptionMapper.java
-    └── filter/
-        └── LoggingFilter.java
-```
-
----
-
-## How to Build and Run
-
-**Prerequisites:** Java 11+, Maven 3.6+
-
-**Step 1 — Clone the repository**
-```bash
-git clone https://github.com/Jenat-Milan04/5COSC022W-smart-campus-api.git
-cd smart-campus-api
-```
-
-**Step 2 — Build the project**
-```bash
-mvn clean package
-```
-
-**Step 3 — Run the server**
-```bash
-java -jar target/smart-campus-api-1.0-SNAPSHOT.jar
-```
-
-**Step 4 — The API is now live at:**
-```
-http://localhost:8080/api/v1
-```
-
-Press `ENTER` in the terminal to stop the server.
-
----
-
-## API Endpoints Summary
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/v1` | Discovery — API metadata and links |
-| GET | `/api/v1/rooms` | List all rooms |
-| POST | `/api/v1/rooms` | Create a new room |
-| GET | `/api/v1/rooms/{roomId}` | Get a specific room |
-| DELETE | `/api/v1/rooms/{roomId}` | Delete a room (blocked if sensors exist) |
-| GET | `/api/v1/sensors` | List all sensors (optional `?type=` filter) |
-| POST | `/api/v1/sensors` | Register a new sensor |
-| GET | `/api/v1/sensors/{sensorId}` | Get a specific sensor |
-| GET | `/api/v1/sensors/{sensorId}/readings` | Get all readings for a sensor |
-| POST | `/api/v1/sensors/{sensorId}/readings` | Add a new reading for a sensor |
-
----
-
-## Sample curl Commands
-
-**1. Hit the Discovery endpoint**
-```bash
-curl http://localhost:8080/api/v1
-```
-
-**2. Create a new Room**
-```bash
-curl -X POST http://localhost:8080/api/v1/rooms \
-  -H "Content-Type: application/json" \
-  -d '{"id":"CS-101","name":"Computer Science Lab","capacity":40}'
-```
-
-**3. Register a new Sensor (linked to the room above)**
-```bash
-curl -X POST http://localhost:8080/api/v1/sensors \
-  -H "Content-Type: application/json" \
-  -d '{"id":"CO2-001","type":"CO2","status":"ACTIVE","currentValue":400,"roomId":"CS-101"}'
-```
-
-**4. Filter sensors by type**
-```bash
-curl "http://localhost:8080/api/v1/sensors?type=CO2"
-```
-
-**5. Post a new sensor reading**
-```bash
-curl -X POST http://localhost:8080/api/v1/sensors/CO2-001/readings \
-  -H "Content-Type: application/json" \
-  -d '{"value":450.5}'
-```
-
-**6. Attempt to delete a room that still has sensors (triggers 409 Conflict)**
-```bash
-curl -X DELETE http://localhost:8080/api/v1/rooms/LIB-301
-```
-
-**7. Attempt to register a sensor with a non-existent roomId (triggers 422)**
-```bash
-curl -X POST http://localhost:8080/api/v1/sensors \
-  -H "Content-Type: application/json" \
-  -d '{"id":"TEMP-999","type":"Temperature","status":"ACTIVE","currentValue":0,"roomId":"FAKE-999"}'
-```
-
----
-
 ---
 
 # Conceptual Report — Question Answers
@@ -277,5 +151,131 @@ The `LoggingFilter` class implements both `ContainerRequestFilter` and `Containe
 If logging were done manually instead, you would need to add `Logger.info()` calls at the start and end of every single resource method. This creates several problems. First, it is **repetitive and error-prone** — it is easy to forget to add logging to a new method, leading to gaps in observability. Second, it **clutters the business logic** with infrastructure concerns. A method that should be focused on creating a room now also has to worry about logging — these are two completely different responsibilities mixed together. This violates the **Single Responsibility Principle**.
 
 Filters, by contrast, are a perfect example of handling **cross-cutting concerns** — behaviour that needs to apply everywhere but doesn't belong to any specific business method. By implementing it once in `LoggingFilter`, the logging is guaranteed to apply to every endpoint, present and future, without touching a single resource class. If the log format ever needs to change, there is exactly one place to update it. This is cleaner, more maintainable, and reflects professional-grade API design.
+
+---
+
+## Project Structure
+
+```
+smart-campus-api/
+├── pom.xml
+└── src/main/java/com/smartcampus/
+    ├── Main.java
+    ├── App.java
+    ├── model/
+    │   ├── Room.java
+    │   ├── Sensor.java
+    │   └── SensorReading.java
+    ├── store/
+    │   └── DataStore.java
+    ├── resource/
+    │   ├── DiscoveryResource.java
+    │   ├── RoomResource.java
+    │   ├── SensorResource.java
+    │   └── SensorReadingResource.java
+    ├── exception/
+    │   ├── RoomNotEmptyException.java
+    │   ├── LinkedResourceNotFoundException.java
+    │   ├── SensorUnavailableException.java
+    │   ├── RoomNotEmptyExceptionMapper.java
+    │   ├── LinkedResourceNotFoundExceptionMapper.java
+    │   ├── SensorUnavailableExceptionMapper.java
+    │   └── GlobalExceptionMapper.java
+    └── filter/
+        └── LoggingFilter.java
+```
+
+---
+
+## How to Build and Run
+
+**Prerequisites:** Java 11+, Maven 3.6+
+
+**Step 1 — Clone the repository**
+```bash
+git clone https://github.com/Jenat-Milan04/5COSC022W-smart-campus-api.git
+cd smart-campus-api
+```
+
+**Step 2 — Build the project**
+```bash
+mvn clean package
+```
+
+**Step 3 — Run the server**
+```bash
+java -jar target/smart-campus-api-1.0-SNAPSHOT.jar
+```
+
+**Step 4 — The API is now live at:**
+```
+http://localhost:8080/api/v1
+```
+
+Press `ENTER` in the terminal to stop the server.
+
+---
+
+## API Endpoints Summary
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1` | Discovery — API metadata and links |
+| GET | `/api/v1/rooms` | List all rooms |
+| POST | `/api/v1/rooms` | Create a new room |
+| GET | `/api/v1/rooms/{roomId}` | Get a specific room |
+| DELETE | `/api/v1/rooms/{roomId}` | Delete a room (blocked if sensors exist) |
+| GET | `/api/v1/sensors` | List all sensors (optional `?type=` filter) |
+| POST | `/api/v1/sensors` | Register a new sensor |
+| GET | `/api/v1/sensors/{sensorId}` | Get a specific sensor |
+| GET | `/api/v1/sensors/{sensorId}/readings` | Get all readings for a sensor |
+| POST | `/api/v1/sensors/{sensorId}/readings` | Add a new reading for a sensor |
+
+---
+
+## Sample curl Commands
+
+**1. Hit the Discovery endpoint**
+```bash
+curl http://localhost:8080/api/v1
+```
+
+**2. Create a new Room**
+```bash
+curl -X POST http://localhost:8080/api/v1/rooms \
+  -H "Content-Type: application/json" \
+  -d '{"id":"CS-101","name":"Computer Science Lab","capacity":40}'
+```
+
+**3. Register a new Sensor (linked to the room above)**
+```bash
+curl -X POST http://localhost:8080/api/v1/sensors \
+  -H "Content-Type: application/json" \
+  -d '{"id":"CO2-001","type":"CO2","status":"ACTIVE","currentValue":400,"roomId":"CS-101"}'
+```
+
+**4. Filter sensors by type**
+```bash
+curl "http://localhost:8080/api/v1/sensors?type=CO2"
+```
+
+**5. Post a new sensor reading**
+```bash
+curl -X POST http://localhost:8080/api/v1/sensors/CO2-001/readings \
+  -H "Content-Type: application/json" \
+  -d '{"value":450.5}'
+```
+
+**6. Attempt to delete a room that still has sensors (triggers 409 Conflict)**
+```bash
+curl -X DELETE http://localhost:8080/api/v1/rooms/LIB-301
+```
+
+**7. Attempt to register a sensor with a non-existent roomId (triggers 422)**
+```bash
+curl -X POST http://localhost:8080/api/v1/sensors \
+  -H "Content-Type: application/json" \
+  -d '{"id":"TEMP-999","type":"Temperature","status":"ACTIVE","currentValue":0,"roomId":"FAKE-999"}'
+```
 
 ---
